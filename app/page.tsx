@@ -11,8 +11,10 @@ import {
 import { DiscussionStage } from "@/components/discussion/DiscussionStage";
 import { EvaluatorPanel } from "@/components/main/EvaluatorPanel";
 import { ImageUploader } from "@/components/main/ImageUploader";
+import { integrateCardData } from "@/lib/services/cardIntegrationService";
+import { orchestrateDiscussion } from "@/lib/services/discussionOrchestrator";
 import { loadDefaultEvaluators } from "@/lib/templates/evaluatorLoader";
-import type { CardData } from "@/types/card";
+import type { CardData, ImageFeatures } from "@/types/card";
 import type { DiscussionMessage, DiscussionPhase } from "@/types/discussion";
 import type { Evaluator } from "@/types/evaluator";
 
@@ -187,6 +189,8 @@ function MainScreenContent() {
     setUploadedImage,
     setDiscussionPhase,
     clearDiscussionLog,
+    setGeneratedCard,
+    addToCollection,
     isDiscussing,
     reset,
   } = useMainScreen();
@@ -196,7 +200,7 @@ function MainScreenContent() {
    * 要件: 2.2 - 画像解析中に4人の評議員が考えているアニメーションを表示する
    */
   const handleStartGeneration = useCallback(async () => {
-    if (!uploadedImage) return;
+    if (!uploadedImage || evaluators.length !== 4) return;
 
     try {
       // 議論ログをクリア
@@ -206,23 +210,73 @@ function MainScreenContent() {
       setDiscussionPhase("thinking");
 
       // 画像解析を実行（並行処理）
-      await startImageAnalysis(uploadedImage);
+      // 要件: 2.1 - Vision APIを1回だけ呼び出す
+      const imageFeatures = await startImageAnalysis(uploadedImage);
 
-      // TODO: 次のタスクで実装
-      // - カード要素生成フェーズに移行
-      // - 評議員の議論を表示
-      // - カードデータを生成
+      // Generating Phaseに移行
+      setDiscussionPhase("generating");
 
-      // 一旦、完了状態に移行（デモ用）
-      setTimeout(() => {
-        setDiscussionPhase("complete");
-      }, 3000);
+      // 4人の評議員のカード要素生成を並列実行
+      // 要件: 3.8 - 4人の評議員の生成処理を並列実行する
+      const discussionResult = await orchestrateDiscussion(
+        evaluators,
+        imageFeatures,
+      );
+
+      // 議論ログを構築
+      const messages: DiscussionMessage[] = [];
+
+      // 各評議員の発言を議論ログに追加
+      // 要件: 4.4 - 各評議員の発言を吹き出し形式でリアルタイム表示する
+      for (const evaluatorResult of discussionResult.evaluatorResults) {
+        const message: DiscussionMessage = {
+          id: `msg-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`,
+          evaluatorId: evaluatorResult.evaluator.id,
+          evaluatorName: evaluatorResult.evaluator.name,
+          message: evaluatorResult.result.message,
+          timestamp: new Date(),
+          type: "discussion",
+        };
+        messages.push(message);
+      }
+
+      // 画像をBase64に変換
+      const imageData = await fileToBase64(uploadedImage);
+
+      // カードデータを統合
+      // 要件: 5.1 - 全評議員の生成が完了したら、各評議員の結果を統合する
+      const cardData = integrateCardData(
+        discussionResult.evaluatorResults,
+        imageFeatures,
+        imageData,
+        messages,
+      );
+
+      // 生成されたカードを設定
+      setGeneratedCard(cardData);
+
+      // コレクションに追加
+      // 要件: 7.1 - カードが生成されたら、カードデータをLocalStorageに保存する
+      addToCollection(cardData);
+
+      // Complete Phaseに移行
+      // 要件: 4.6 - 全評議員の生成が完了したら、「結果を見る！」ボタンを表示する
+      setDiscussionPhase("complete");
     } catch (error) {
       console.error("カード生成エラー:", error);
       // エラー時は初期状態に戻る
+      // 要件: 9.3, 9.4 - 解析または生成が失敗したら、議論を自然に終了させ、Main Screenの初期状態に戻る
       reset();
     }
-  }, [uploadedImage, clearDiscussionLog, setDiscussionPhase, reset]);
+  }, [
+    uploadedImage,
+    evaluators,
+    clearDiscussionLog,
+    setDiscussionPhase,
+    setGeneratedCard,
+    addToCollection,
+    reset,
+  ]);
 
   return (
     <div className="flex min-h-screen flex-col bg-gradient-to-br from-purple-50 via-blue-50 to-pink-50 dark:from-zinc-900 dark:via-zinc-900 dark:to-zinc-900">
@@ -359,7 +413,7 @@ function getRarityColor(rarity: CardData["rarity"]): string {
  * 画像解析を開始する
  * 要件: 2.2 - 画像解析処理を並行実行
  */
-async function startImageAnalysis(imageFile: File): Promise<void> {
+async function startImageAnalysis(imageFile: File): Promise<ImageFeatures> {
   const formData = new FormData();
   formData.append("image", imageFile);
 
@@ -373,7 +427,35 @@ async function startImageAnalysis(imageFile: File): Promise<void> {
   }
 
   const result = await response.json();
-  return result;
+
+  if (!result.success || !result.features) {
+    throw new Error(result.error || "画像解析に失敗しました");
+  }
+
+  return result.features;
+}
+
+/**
+ * ファイルをBase64文字列に変換する
+ *
+ * @param file - 変換するファイル
+ * @returns Base64エンコードされた文字列
+ */
+async function fileToBase64(file: File): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => {
+      if (typeof reader.result === "string") {
+        resolve(reader.result);
+      } else {
+        reject(new Error("Failed to convert file to base64"));
+      }
+    };
+    reader.onerror = () => {
+      reject(new Error("Failed to read file"));
+    };
+    reader.readAsDataURL(file);
+  });
 }
 
 /**

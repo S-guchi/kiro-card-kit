@@ -88,7 +88,7 @@ export function ImageUploader({
    * ドラッグオーバー時の処理
    */
   const handleDragOver = useCallback(
-    (event: React.DragEvent<HTMLDivElement>) => {
+    (event: React.DragEvent<HTMLElement>) => {
       event.preventDefault();
       if (disabled) return;
       setIsDragging(true);
@@ -99,19 +99,16 @@ export function ImageUploader({
   /**
    * ドラッグリーブ時の処理
    */
-  const handleDragLeave = useCallback(
-    (event: React.DragEvent<HTMLDivElement>) => {
-      event.preventDefault();
-      setIsDragging(false);
-    },
-    [],
-  );
+  const handleDragLeave = useCallback((event: React.DragEvent<HTMLElement>) => {
+    event.preventDefault();
+    setIsDragging(false);
+  }, []);
 
   /**
    * ドロップ時の処理
    */
   const handleDrop = useCallback(
-    (event: React.DragEvent<HTMLDivElement>) => {
+    (event: React.DragEvent<HTMLElement>) => {
       event.preventDefault();
       setIsDragging(false);
 
