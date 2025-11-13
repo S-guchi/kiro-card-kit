@@ -2,6 +2,7 @@
 
 import { Brain } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
+import { SpeechBubble } from "@/components/discussion/SpeechBubble";
 import type { DiscussionMessage } from "@/types/discussion";
 import type { Evaluator } from "@/types/evaluator";
 
@@ -128,40 +129,20 @@ export function EvaluatorPanel({
             key={evaluator.id}
             className="relative flex flex-col items-center gap-1"
           >
-            {/* 吹き出し */}
-            <AnimatePresence>
-              {latestMessage && (
-                <motion.div
-                  className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 z-20 w-32"
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: 10 }}
-                >
-                  <div
-                    className="rounded-lg border-2 p-2 text-center relative bg-white/90 backdrop-blur-sm dark:bg-zinc-950/90"
-                    style={{ borderColor: color }}
-                  >
-                    <p
-                      className="text-zinc-800 dark:text-zinc-200"
-                      style={{ fontSize: "0.55rem", lineHeight: "1.2" }}
-                    >
-                      {latestMessage}
-                    </p>
-                    {/* 吹き出しの矢印 */}
-                    <div
-                      className="absolute top-full left-1/2 -translate-x-1/2 -mt-1 w-2 h-2 bg-white dark:bg-zinc-950"
-                      style={{
-                        border: `2px solid ${color}`,
-                        transform: "translateX(-50%) rotate(45deg)",
-                      }}
-                    />
-                  </div>
-                </motion.div>
-              )}
-            </AnimatePresence>
-
             {/* アバター */}
             <EvaluatorAvatar evaluator={evaluator} isThinking={isThinking} />
+
+            {/* 吹き出し（SpeechBubbleコンポーネントを使用） */}
+            <AnimatePresence>
+              {latestMessage && (
+                <SpeechBubble
+                  message={latestMessage}
+                  color={color}
+                  position="bottom-left"
+                  evaluatorName={evaluator.name}
+                />
+              )}
+            </AnimatePresence>
 
             {/* 評議員名 */}
             <div
