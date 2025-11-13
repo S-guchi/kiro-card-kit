@@ -7,7 +7,16 @@
   },
   "files": {
     "ignoreUnknown": true,
-    "includes": ["**", "!node_modules", "!.next", "!dist", "!build"]
+    "includes": [
+      "**",
+      "!node_modules",
+      "!.next",
+      "!dist",
+      "!build",
+      "!.vscode",
+      "!types/validator.ts",
+      "!types/routes.d.ts"
+    ]
   },
   "formatter": {
     "enabled": true,

@@ -13,5 +13,7 @@ mcp使用ルール
 - UIの変更を行なった場合は chrome-devtoolsで見た目に問題がないかスクリーンショットを撮って確認すること
 
 作業が終わったら以下を実行すること
+- pnpm lint
+- pnpm type-check
 - pnpm format
 - git commit -m "<作業内容>"
