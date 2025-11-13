@@ -29,28 +29,28 @@ export class VisionAPIError extends Error {
 
 /**
  * 画像をBase64形式に変換する
+ * Node.js環境（APIルート）で動作するため、FileReaderではなくBufferを使用
  *
  * @param file - 変換する画像ファイル
  * @returns Base64エンコードされた画像データ
  */
 async function encodeImageToBase64(file: File): Promise<string> {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      const base64String = reader.result as string;
-      // data:image/jpeg;base64, の部分を除去
-      const base64Data = base64String.split(",")[1];
-      if (!base64Data) {
-        reject(new Error("Base64エンコードに失敗しました"));
-        return;
-      }
-      resolve(base64Data);
-    };
-    reader.onerror = () => {
-      reject(new Error("ファイルの読み込みに失敗しました"));
-    };
-    reader.readAsDataURL(file);
-  });
+  try {
+    // FileオブジェクトからArrayBufferを取得
+    const arrayBuffer = await file.arrayBuffer();
+    // ArrayBufferをBufferに変換してBase64エンコード
+    const buffer = Buffer.from(arrayBuffer);
+    const base64Data = buffer.toString("base64");
+
+    if (!base64Data) {
+      throw new Error("Base64エンコードに失敗しました");
+    }
+
+    return base64Data;
+  } catch (error) {
+    console.error("ファイルのエンコードエラー:", error);
+    throw new Error("ファイルの読み込みに失敗しました");
+  }
 }
 
 /**
