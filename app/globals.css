@@ -1,5 +1,10 @@
 @import "tailwindcss";
 
+/**
+ * グローバルスタイル
+ * モバイルファースト設計を考慮したレスポンシブ対応
+ */
+
 :root {
   --background: #ffffff;
   --foreground: #171717;
@@ -22,5 +27,21 @@
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans), Arial, Helvetica, sans-serif;
+}
+
+/* モバイルファースト: 最小幅320pxをサポート */
+@media (min-width: 320px) {
+  body {
+    min-width: 320px;
+  }
+}
+
+/* タッチ操作の最適化 */
+@media (hover: none) and (pointer: coarse) {
+  button,
+  a {
+    min-height: 44px;
+    min-width: 44px;
+  }
 }

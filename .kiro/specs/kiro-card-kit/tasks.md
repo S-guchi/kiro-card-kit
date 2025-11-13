@@ -6,7 +6,7 @@
 
 ## タスク
 
-- [ ] 1. プロジェクトのセットアップと基本構造の構築
+- [-] 1. プロジェクトのセットアップと基本構造の構築
   - Next.jsプロジェクトを作成し、必要な依存関係をインストール
   - TypeScript、Tailwind CSS、Lucide Reactを設定
   - Jest + React Testing Libraryを設定

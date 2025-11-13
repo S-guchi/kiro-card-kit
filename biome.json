@@ -14,6 +14,7 @@
       "!dist",
       "!build",
       "!.vscode",
+      "!design",
       "!types/validator.ts",
       "!types/routes.d.ts"
     ]
