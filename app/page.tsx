@@ -8,6 +8,7 @@ import {
   useEffect,
   useState,
 } from "react";
+import { DiscussionStage } from "@/components/discussion/DiscussionStage";
 import { EvaluatorPanel } from "@/components/main/EvaluatorPanel";
 import { ImageUploader } from "@/components/main/ImageUploader";
 import { loadDefaultEvaluators } from "@/lib/templates/evaluatorLoader";
@@ -184,8 +185,44 @@ function MainScreenContent() {
     evaluators,
     discussionLog,
     setUploadedImage,
+    setDiscussionPhase,
+    clearDiscussionLog,
     isDiscussing,
+    reset,
   } = useMainScreen();
+
+  /**
+   * カード生成を開始する
+   * 要件: 2.2 - 画像解析中に4人の評議員が考えているアニメーションを表示する
+   */
+  const handleStartGeneration = useCallback(async () => {
+    if (!uploadedImage) return;
+
+    try {
+      // 議論ログをクリア
+      clearDiscussionLog();
+
+      // Thinking Phaseに移行
+      setDiscussionPhase("thinking");
+
+      // 画像解析を実行（並行処理）
+      await startImageAnalysis(uploadedImage);
+
+      // TODO: 次のタスクで実装
+      // - カード要素生成フェーズに移行
+      // - 評議員の議論を表示
+      // - カードデータを生成
+
+      // 一旦、完了状態に移行（デモ用）
+      setTimeout(() => {
+        setDiscussionPhase("complete");
+      }, 3000);
+    } catch (error) {
+      console.error("カード生成エラー:", error);
+      // エラー時は初期状態に戻る
+      reset();
+    }
+  }, [uploadedImage, clearDiscussionLog, setDiscussionPhase, reset]);
 
   return (
     <div className="flex min-h-screen flex-col bg-gradient-to-br from-purple-50 via-blue-50 to-pink-50 dark:from-zinc-900 dark:via-zinc-900 dark:to-zinc-900">
@@ -241,32 +278,32 @@ function MainScreenContent() {
 
       {/* メインコンテンツ */}
       <main className="flex-1 flex flex-col p-4 gap-4">
-        {/* 画像表示エリア */}
-        <div className="flex-1 flex items-center justify-center">
-          <div className="w-full max-w-md">
-            <ImageUploader
-              onImageSelect={setUploadedImage}
-              selectedImage={uploadedImage}
-              onClear={() => setUploadedImage(null)}
-              disabled={isDiscussing}
-            />
-
-            {/* ステータスオーバーレイ */}
-            {uploadedImage &&
-              (discussionPhase === "thinking" ||
-                discussionPhase === "generating") && (
-                <div className="absolute inset-0 bg-black/60 flex items-center justify-center rounded-xl">
-                  <div className="animate-spin rounded-full h-12 w-12 border-4 border-purple-500 border-t-transparent" />
-                </div>
-              )}
+        {/* 画像表示エリア - DiscussionStageを使用 */}
+        {uploadedImage ? (
+          <DiscussionStage
+            phase={discussionPhase}
+            uploadedImage={uploadedImage}
+            evaluators={evaluators}
+          />
+        ) : (
+          <div className="flex-1 flex items-center justify-center">
+            <div className="w-full max-w-md">
+              <ImageUploader
+                onImageSelect={setUploadedImage}
+                selectedImage={uploadedImage}
+                onClear={() => setUploadedImage(null)}
+                disabled={isDiscussing}
+              />
+            </div>
           </div>
-        </div>
+        )}
 
         {/* アクションボタンエリア */}
         <div className="space-y-2">
           {discussionPhase === "idle" && uploadedImage && (
             <button
               type="button"
+              onClick={handleStartGeneration}
               className="w-full rounded-lg bg-gradient-to-r from-purple-600 to-pink-600 px-6 py-4 text-white font-bold shadow-lg hover:shadow-xl transition-all hover:scale-105"
             >
               カード生成開始！
@@ -283,6 +320,7 @@ function MainScreenContent() {
               </button>
               <button
                 type="button"
+                onClick={reset}
                 className="w-full rounded-lg border-2 border-zinc-300 bg-white/50 px-4 py-2 text-sm text-zinc-700 backdrop-blur-sm hover:bg-white/80 transition-all dark:border-zinc-700 dark:bg-zinc-950/50 dark:text-zinc-300 dark:hover:bg-zinc-950/80"
               >
                 もう一度
@@ -315,6 +353,27 @@ function getRarityColor(rarity: CardData["rarity"]): string {
     Legendary: "#fbbf24",
   };
   return colors[rarity];
+}
+
+/**
+ * 画像解析を開始する
+ * 要件: 2.2 - 画像解析処理を並行実行
+ */
+async function startImageAnalysis(imageFile: File): Promise<void> {
+  const formData = new FormData();
+  formData.append("image", imageFile);
+
+  const response = await fetch("/api/analyze-image", {
+    method: "POST",
+    body: formData,
+  });
+
+  if (!response.ok) {
+    throw new Error("画像解析に失敗しました");
+  }
+
+  const result = await response.json();
+  return result;
 }
 
 /**

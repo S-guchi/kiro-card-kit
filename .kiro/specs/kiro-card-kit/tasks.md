@@ -92,13 +92,13 @@
     - エラーハンドリングを実装
     - _要件: 2.1, 2.4, 2.6_
 
-- [ ] 9. 議論表示の実装
-  - [ ] 9.1 DiscussionStageコンポーネントの作成
+- [x] 9. 議論表示の実装
+  - [x] 9.1 DiscussionStageコンポーネントの作成
     - `components/discussion/DiscussionStage.tsx`を作成
     - `/design`ディレクトリのモックアプリを参考に議論表示を実装
     - _要件: 4.1, 4.2_
   
-  - [ ] 9.2 Thinking Phase表示の実装
+  - [x] 9.2 Thinking Phase表示の実装
     - 画像解析中の表示を実装
     - 画像解析処理を並行実行
     - _要件: 2.2_
