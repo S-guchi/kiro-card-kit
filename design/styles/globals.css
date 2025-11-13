@@ -1,0 +1,118 @@
+@import "tailwindcss";
+
+@theme {
+  /* Retro color palette */
+  --color-retro-bg: #1a1a2e;
+  --color-retro-panel: #16213e;
+  --color-retro-accent: #0f3460;
+  --color-retro-highlight: #e94560;
+  --color-retro-text: #f1f1f1;
+  --color-retro-muted: #a0a0a0;
+  
+  /* Card attributes */
+  --color-fire: #ff6b6b;
+  --color-nature: #51cf66;
+  --color-machine: #748ffc;
+  --color-cosmic: #cc5de8;
+  
+  /* Rarity colors */
+  --color-common: #9ca3af;
+  --color-rare: #60a5fa;
+  --color-epic: #a78bfa;
+  --color-legendary: #fbbf24;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Press Start 2P', 'Courier New', monospace;
+  background: var(--color-retro-bg);
+  color: var(--color-retro-text);
+  overflow-x: hidden;
+}
+
+/* Retro pixel font - fallback to monospace */
+h1 {
+  font-size: 2rem;
+  line-height: 1.2;
+  text-shadow: 3px 3px 0 var(--color-retro-highlight);
+}
+
+h2 {
+  font-size: 1.5rem;
+  line-height: 1.3;
+}
+
+h3 {
+  font-size: 1.2rem;
+  line-height: 1.4;
+}
+
+p {
+  font-size: 0.875rem;
+  line-height: 1.6;
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+}
+
+/* Retro button styles */
+.retro-button {
+  background: var(--color-retro-highlight);
+  color: white;
+  border: 3px solid var(--color-retro-accent);
+  box-shadow: 5px 5px 0 var(--color-retro-accent);
+  transition: all 0.1s;
+}
+
+.retro-button:hover {
+  transform: translate(2px, 2px);
+  box-shadow: 3px 3px 0 var(--color-retro-accent);
+}
+
+.retro-button:active {
+  transform: translate(5px, 5px);
+  box-shadow: none;
+}
+
+/* Retro panel styles */
+.retro-panel {
+  background: var(--color-retro-panel);
+  border: 3px solid var(--color-retro-accent);
+  box-shadow: 0 0 20px rgba(233, 69, 96, 0.3);
+}
+
+/* Pixel art effect */
+.pixel-corners {
+  clip-path: polygon(
+    0 8px, 8px 8px, 8px 0,
+    calc(100% - 8px) 0, calc(100% - 8px) 8px, 100% 8px,
+    100% calc(100% - 8px), calc(100% - 8px) calc(100% - 8px), calc(100% - 8px) 100%,
+    8px 100%, 8px calc(100% - 8px), 0 calc(100% - 8px)
+  );
+}
+
+/* Scanline effect for retro feel */
+.scanlines {
+  position: relative;
+}
+
+.scanlines::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to bottom,
+    transparent 50%,
+    rgba(0, 0, 0, 0.1) 50%
+  );
+  background-size: 100% 4px;
+  pointer-events: none;
+  z-index: 10;
+}
