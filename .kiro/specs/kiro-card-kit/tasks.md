@@ -103,14 +103,14 @@
     - 画像解析処理を並行実行
     - _要件: 2.2_
 
-- [ ] 10. カード要素生成APIの実装
-  - [ ] 10.1 カード生成サービスの作成
+- [x] 10. カード要素生成APIの実装
+  - [x] 10.1 カード生成サービスの作成
     - `lib/services/cardGenerationService.ts`を作成
     - Vercel AI SDKを使用したAI機能を実装
     - 各評議員の責任に応じた生成ロジックを実装
     - _要件: 3.1_
   
-  - [ ] 10.2 カード要素生成APIエンドポイントの作成
+  - [x] 10.2 カード要素生成APIエンドポイントの作成
     - `app/api/generate-card-elements/route.ts`を作成
     - POST リクエストを受け付ける
     - 評議員の責任（name、flavor、attribute、color-rarity）に応じて生成
