@@ -41,7 +41,7 @@
     - テンプレートのバリデーション機能を実装
     - _要件: 8.1, 8.6_
 
-- [ ] 4. LocalStorageマネージャーの実装
+- [-] 4. LocalStorageマネージャーの実装
   - `lib/storage/localStorageManager.ts`を作成
   - カードデータの保存機能を実装
   - カードデータの読み込み機能を実装
