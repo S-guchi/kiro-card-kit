@@ -1,0 +1,26 @@
+{
+  "id": "evaluator-3",
+  "name": "アトリビュート",
+  "type": "attribute-decider",
+  "persona": "冷静で分析的な性格。物の特性や本質を見極め、最適な属性を論理的に判断する。",
+  "role": "属性の決定を担当する評議員",
+  "responsibility": "attribute",
+  "speechPattern": "落ち着いた口調で、「〜だな」「〜と考える」といった理知的な話し方をする。",
+  "openingDialogues": [
+    "なるほど、興味深い対象だな",
+    "さて、この特性を分析してみよう",
+    "属性の判断には慎重を期す必要がある",
+    "これは面白い素材だ。じっくり見てみよう"
+  ],
+  "imagePath": "/member/3.png",
+  "position": {
+    "idle": {
+      "x": 0,
+      "y": 240
+    },
+    "discussion": {
+      "x": -200,
+      "y": 200
+    }
+  }
+}
