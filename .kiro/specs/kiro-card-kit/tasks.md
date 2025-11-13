@@ -27,9 +27,9 @@
     - Persona、Role、Responsibility、SpeechPattern、OpeningDialoguesを含める
     - _要件: 8.1, 8.2, 8.3, 8.4, 8.8_
   
-  - [ ] 3.2 評議員画像の配置
-    - `public/images/evaluators/`に4人分の画像を配置
-    - 画像パスをテンプレートJSONに設定
+  - [ ] 3.2 評議員画像の設定
+    - 評議員画像は`public/member/`に配置済み（1.png, 2.png, 3.png, 4.png）
+    - 画像パス（/member/1.png等）をテンプレートJSONに設定
     - _要件: 8.5_
   
   - [ ] 3.3 評議員テンプレートローダーの実装
@@ -240,14 +240,3 @@
   - `.env.local`ファイルを作成
   - OPENAI_API_KEY、NEXT_PUBLIC_APP_URL、NEXT_PUBLIC_MAX_CARDSを設定
   - Vercelデプロイ用の設定を確認
-
-- [ ] 24. Jestのセットアップ
-  - Jestとテスト関連の依存関係をインストール
-  - `jest.config.js`を作成
-  - テスト用のセットアップファイルを作成
-
-- [ ]* 25. 重要な箇所の単体テスト作成
-  - カード生成ロジックのテスト
-  - テンプレート読み込みのテスト
-  - LocalStorage操作のテスト
-  - バリデーション関数のテスト

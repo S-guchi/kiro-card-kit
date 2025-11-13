@@ -1,0 +1,19 @@
+{
+  "enabled": true,
+  "name": "Lint & Type Check on Save",
+  "description": "TypeScriptファイルやJavaScriptファイルが保存されたときに、pnpm lintとpnpm type-checkを自動実行します",
+  "version": "1",
+  "when": {
+    "type": "fileEdited",
+    "patterns": [
+      "**/*.ts",
+      "**/*.tsx",
+      "**/*.js",
+      "**/*.jsx"
+    ]
+  },
+  "then": {
+    "type": "askAgent",
+    "prompt": "TypeScriptファイルが変更されました。以下のコマンドを実行してください:\n1. `pnpm lint` を実行してコードの品質をチェック\n2. `pnpm type-check` を実行して型エラーをチェック\n\nエラーが見つかった場合は、その内容を報告してください。"
+  }
+}

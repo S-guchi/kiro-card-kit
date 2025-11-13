@@ -101,12 +101,11 @@ kiro-card-kit/
 │   │   │   └── color-decider.json
 │   │   └── card-skins/
 │   │       └── default/
-│   └── images/
-│       └── evaluators/
-│           ├── name-generator.png
-│           ├── flavor-writer.png
-│           ├── attribute-decider.png
-│           └── color-decider.png
+│   └── member/
+│       ├── 1.png  # 評議員1の画像
+│       ├── 2.png  # 評議員2の画像
+│       ├── 3.png  # 評議員3の画像
+│       └── 4.png  # 評議員4の画像
 ├── types/
 │   ├── card.ts
 │   ├── evaluator.ts
@@ -184,7 +183,7 @@ interface Evaluator {
   responsibility: 'name' | 'flavor' | 'attribute' | 'color-rarity';  // 担当要素
   speechPattern: string;  // 言動の癖
   openingDialogues: string[];  // 導入会話の配列
-  imagePath: string;  // 評議員の画像パス
+  imagePath: string;  // 評議員の画像パス（例: /member/1.png）
   position: {
     idle: { x: number; y: number };  // 待機位置
     discussion: { x: number; y: number };  // 議論位置（四隅）
@@ -426,21 +425,6 @@ const handleError = (error: CardGenerationError) => {
   }
 };
 ```
-
-## テスト戦略
-
-### テスト範囲
-
-1. **ユニットテスト（重要な箇所のみ）**
-   - カード生成ロジック
-   - テンプレート読み込み
-   - LocalStorage操作
-   - バリデーション関数
-
-### テストツール
-
-- **ユニット**: Jest
-- **コンポーネント**: React Testing Library
 
 ## パフォーマンス最適化
 
