@@ -2,6 +2,7 @@
 
 import { useEffect } from "react";
 import type { CardData } from "@/types/card";
+import { CardDisplay } from "./CardDisplay";
 
 /**
  * CardModalのプロパティ
@@ -103,24 +104,10 @@ export function CardModal({ card, isOpen, onClose }: CardModalProps) {
             </p>
           </div>
 
-          {/* CardDisplayコンポーネントをここに配置予定 */}
-          <div className="bg-gradient-to-br from-purple-100 to-pink-100 dark:from-zinc-800 dark:to-zinc-700 rounded-xl p-8 mb-6">
-            <p className="text-center text-zinc-600 dark:text-zinc-400">
-              CardDisplayコンポーネント（タスク15で実装予定）
-            </p>
-            <div className="mt-4 space-y-2 text-sm">
-              <p>
-                <strong>カード名:</strong> {card.name}
-              </p>
-              <p>
-                <strong>属性:</strong> {card.attribute}
-              </p>
-              <p>
-                <strong>レア度:</strong> {card.rarity}
-              </p>
-              <p>
-                <strong>フレーバー:</strong> {card.flavorText}
-              </p>
+          {/* CardDisplayコンポーネント */}
+          <div className="flex justify-center mb-6">
+            <div className="w-full max-w-md">
+              <CardDisplay card={card} />
             </div>
           </div>
 
