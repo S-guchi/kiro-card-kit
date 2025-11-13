@@ -8,6 +8,7 @@ import {
   useEffect,
   useState,
 } from "react";
+import { CardModal } from "@/components/card/CardModal";
 import { DiscussionStage } from "@/components/discussion/DiscussionStage";
 import { EvaluatorPanel } from "@/components/main/EvaluatorPanel";
 import { ImageUploader } from "@/components/main/ImageUploader";
@@ -186,6 +187,7 @@ function MainScreenContent() {
     collection,
     evaluators,
     discussionLog,
+    generatedCard,
     setUploadedImage,
     setDiscussionPhase,
     clearDiscussionLog,
@@ -194,6 +196,9 @@ function MainScreenContent() {
     isDiscussing,
     reset,
   } = useMainScreen();
+
+  // Card Modalの開閉状態
+  const [isCardModalOpen, setIsCardModalOpen] = useState(false);
 
   /**
    * カード生成を開始する
@@ -368,6 +373,7 @@ function MainScreenContent() {
             <>
               <button
                 type="button"
+                onClick={() => setIsCardModalOpen(true)}
                 className="w-full rounded-lg bg-gradient-to-r from-pink-600 to-red-600 px-6 py-4 text-white font-bold shadow-lg hover:shadow-xl transition-all hover:scale-105 animate-pulse"
               >
                 ✨ 結果を見る！ ✨
@@ -392,6 +398,15 @@ function MainScreenContent() {
           />
         )}
       </main>
+
+      {/* Card Modal */}
+      {generatedCard && (
+        <CardModal
+          card={generatedCard}
+          isOpen={isCardModalOpen}
+          onClose={() => setIsCardModalOpen(false)}
+        />
+      )}
     </div>
   );
 }
