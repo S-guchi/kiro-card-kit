@@ -71,21 +71,21 @@
     - エラーメッセージ表示機能
     - _要件: 1.6_
 
-- [-] 7. 評議員パネルとアバターの実装
+- [x] 7. 評議員パネルとアバターの実装
   - `components/main/EvaluatorPanel.tsx`を作成
   - 4人の評議員を表示
   - 評議員画像を表示
   - `/design`ディレクトリのモックアプリを参考にレイアウトを実装
   - _要件: 4.1, 4.2_
 
-- [ ] 8. 画像解析APIの実装
-  - [ ] 8.1 Vision APIサービスの作成
+- [x] 8. 画像解析APIの実装
+  - [x] 8.1 Vision APIサービスの作成
     - `lib/services/visionService.ts`を作成
     - OpenAI Vision APIを使用した画像解析機能を実装
     - 物体の種類、色、形状、材質、詳細な説明を抽出
     - _要件: 2.1, 2.3_
   
-  - [ ] 8.2 画像解析APIエンドポイントの作成
+  - [x] 8.2 画像解析APIエンドポイントの作成
     - `app/api/analyze-image/route.ts`を作成
     - POST リクエストを受け付ける
     - 画像をVision APIに送信し、結果を返す
