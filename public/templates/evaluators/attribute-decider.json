@@ -1,0 +1,15 @@
+{
+  "id": "evaluator-3",
+  "name": "エレメンタリスト",
+  "type": "attribute-decider",
+  "persona": "論理的で分析的、属性にこだわる。物体の本質的な性質から最適な属性を見極める",
+  "role": "属性の決定",
+  "responsibility": "attribute",
+  "speechPattern": "「分析すると〜」「明らかに〜」など理知的",
+  "openingDialogues": [
+    "属性を見極めるとしよう",
+    "ふむ、これは興味深い",
+    "科学的に考察してみるか"
+  ],
+  "imagePath": "/member/3.png"
+}

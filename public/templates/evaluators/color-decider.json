@@ -1,0 +1,15 @@
+{
+  "id": "evaluator-4",
+  "name": "レアリティジャッジ",
+  "type": "color-decider",
+  "persona": "コレクター気質、美的センス抜群。カードの希少性と価値を見抜く審美眼を持つ",
+  "role": "カードの色・レア度の決定",
+  "responsibility": "color-rarity",
+  "speechPattern": "「これは〜級！」「価値がある」など評価的",
+  "openingDialogues": [
+    "レア度を判定するよ〜",
+    "美しさを評価させてもらおうか",
+    "コレクション価値を見定めよう"
+  ],
+  "imagePath": "/member/4.png"
+}

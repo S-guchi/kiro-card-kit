@@ -15,27 +15,27 @@
   - モバイルファースト設計を考慮したレスポンシブ設定
   - _要件: 11.1, 11.2, 12.1, 12.2, 12.3, 12.4_
 
-- [-] 2. TypeScript型定義の作成
+- [x] 2. TypeScript型定義の作成
   - `types/evaluator.ts`にEvaluator型を定義
   - `types/card.ts`にCardData型を定義
   - `types/discussion.ts`にDiscussionMessage型を定義
   - 画像解析結果の型（ImageFeatures）を定義
   - _要件: 3.1, 5.6_
 
-- [ ] 3. 評議員テンプレートシステムの実装
-  - [ ] 3.1 評議員テンプレートJSONファイルの作成
+- [x] 3. 評議員テンプレートシステムの実装
+  - [x] 3.1 評議員テンプレートJSONファイルの作成
     - `public/templates/evaluators/`に4人分のJSONファイルを作成
     - カード名担当、フレーバー担当、属性担当、色・レア度担当の評議員を定義
     - Persona、Role、Responsibilityを含める
     - `/design`ディレクトリのモックアプリを参考にセリフや設定を定義
     - _要件: 8.1, 8.2, 8.3, 8.7_
   
-  - [ ] 3.2 評議員画像の設定
+  - [x] 3.2 評議員画像の設定
     - 評議員画像は`public/member/`に配置済み（1.png, 2.png, 3.png, 4.png）
     - 画像パス（/member/1.png等）をテンプレートJSONに設定
     - _要件: 8.4_
   
-  - [ ] 3.3 評議員テンプレートローダーの実装
+  - [x] 3.3 評議員テンプレートローダーの実装
     - `lib/templates/evaluatorLoader.ts`を作成
     - テンプレートJSONを読み込む関数を実装
     - テンプレートのバリデーション機能を実装
