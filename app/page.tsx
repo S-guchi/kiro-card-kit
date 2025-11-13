@@ -8,6 +8,7 @@ import {
   useEffect,
   useState,
 } from "react";
+import { ImageUploader } from "@/components/main/ImageUploader";
 import type { CardData } from "@/types/card";
 import type { DiscussionMessage, DiscussionPhase } from "@/types/discussion";
 import type { Evaluator } from "@/types/evaluator";
@@ -163,7 +164,13 @@ function useMainScreen() {
  * モバイルファースト設計を考慮したレスポンシブレイアウト
  */
 function MainScreenContent() {
-  const { discussionPhase, uploadedImage, collection } = useMainScreen();
+  const {
+    discussionPhase,
+    uploadedImage,
+    collection,
+    setUploadedImage,
+    isDiscussing,
+  } = useMainScreen();
 
   return (
     <div className="flex min-h-screen flex-col bg-gradient-to-br from-purple-50 via-blue-50 to-pink-50 dark:from-zinc-900 dark:via-zinc-900 dark:to-zinc-900">
@@ -221,34 +228,23 @@ function MainScreenContent() {
       <main className="flex-1 flex flex-col p-4 gap-4">
         {/* 画像表示エリア */}
         <div className="flex-1 flex items-center justify-center">
-          {!uploadedImage ? (
-            <div className="w-full max-w-md">
-              <div className="rounded-xl border-2 border-dashed border-purple-300 bg-white/50 p-8 text-center backdrop-blur-sm dark:border-zinc-700 dark:bg-zinc-950/50">
-                <p className="text-zinc-600 dark:text-zinc-400">
-                  画像アップロード機能は次のタスクで実装されます
-                </p>
-              </div>
-            </div>
-          ) : (
-            <div className="relative w-full max-w-md">
-              <div className="rounded-xl overflow-hidden border-2 border-purple-300 dark:border-zinc-700 aspect-square">
-                {/* biome-ignore lint/performance/noImgElement: Blob URLのため */}
-                <img
-                  src={URL.createObjectURL(uploadedImage)}
-                  alt="アップロードされた画像"
-                  className="w-full h-full object-cover"
-                />
-              </div>
+          <div className="w-full max-w-md">
+            <ImageUploader
+              onImageSelect={setUploadedImage}
+              selectedImage={uploadedImage}
+              onClear={() => setUploadedImage(null)}
+              disabled={isDiscussing}
+            />
 
-              {/* ステータスオーバーレイ */}
-              {(discussionPhase === "thinking" ||
+            {/* ステータスオーバーレイ */}
+            {uploadedImage &&
+              (discussionPhase === "thinking" ||
                 discussionPhase === "generating") && (
                 <div className="absolute inset-0 bg-black/60 flex items-center justify-center rounded-xl">
                   <div className="animate-spin rounded-full h-12 w-12 border-4 border-purple-500 border-t-transparent" />
                 </div>
               )}
-            </div>
-          )}
+          </div>
         </div>
 
         {/* アクションボタンエリア */}
