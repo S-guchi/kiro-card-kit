@@ -4,6 +4,8 @@
  */
 
 import OpenAI from "openai";
+import { zodResponseFormat } from "openai/helpers/zod";
+import { z } from "zod";
 import type { ImageFeatures } from "@/types/card";
 
 /**
@@ -11,6 +13,22 @@ import type { ImageFeatures } from "@/types/card";
  */
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
+});
+
+/**
+ * 画像解析結果のZodスキーマ
+ * Structured Outputsで型安全なレスポンスを保証
+ */
+const ImageFeaturesSchema = z.object({
+  objectType: z
+    .string()
+    .describe("物体の種類（例：ぬいぐるみ、フィギュア、おもちゃの車など）"),
+  colors: z.array(z.string()).describe("主要な色のリスト"),
+  shapes: z.array(z.string()).describe("形状の特徴のリスト"),
+  materials: z.array(z.string()).describe("材質のリスト"),
+  detailedDescription: z
+    .string()
+    .describe("物体の詳細な説明（外観、特徴、雰囲気など）"),
 });
 
 /**
@@ -66,25 +84,16 @@ export async function analyzeImage(imageFile: File): Promise<ImageFeatures> {
     const base64Image = await encodeImageToBase64(imageFile);
     const mimeType = imageFile.type;
 
-    // Vision APIを呼び出して画像を解析
-    const response = await openai.chat.completions.create({
-      model: "gpt-4.1-mini",
+    // Vision APIを呼び出して画像を解析（Structured Outputsを使用）
+    const response = await openai.chat.completions.parse({
+      model: "gpt-4o-mini",
       messages: [
         {
           role: "user",
           content: [
             {
               type: "text",
-              text: `この画像を詳細に分析してください。以下の情報をJSON形式で返してください：
-{
-  "objectType": "物体の種類（例：ぬいぐるみ、フィギュア、おもちゃの車など）",
-  "colors": ["主要な色1", "主要な色2", "主要な色3"],
-  "shapes": ["形状の特徴1", "形状の特徴2"],
-  "materials": ["材質1", "材質2"],
-  "detailedDescription": "物体の詳細な説明（外観、特徴、雰囲気など）"
-}
-
-必ずJSON形式のみを返してください。他のテキストは含めないでください。`,
+              text: "この画像を詳細に分析してください。物体の種類、主要な色、形状の特徴、材質、詳細な説明を提供してください。",
             },
             {
               type: "image_url",
@@ -95,13 +104,14 @@ export async function analyzeImage(imageFile: File): Promise<ImageFeatures> {
           ],
         },
       ],
+      response_format: zodResponseFormat(ImageFeaturesSchema, "image_features"),
       max_tokens: 500,
       temperature: 0.7,
     });
 
-    // レスポンスからコンテンツを取得
-    const content = response.choices[0]?.message?.content;
-    if (!content) {
+    // Structured Outputsでパース済みのレスポンスを取得
+    const message = response.choices[0]?.message;
+    if (!message) {
       throw new VisionAPIError(
         "Vision APIからのレスポンスが空です",
         "EMPTY_RESPONSE",
@@ -109,13 +119,17 @@ export async function analyzeImage(imageFile: File): Promise<ImageFeatures> {
       );
     }
 
-    // JSONをパース
-    let imageFeatures: ImageFeatures;
-    try {
-      imageFeatures = JSON.parse(content) as ImageFeatures;
-    } catch (parseError) {
-      console.error("JSONパースエラー:", parseError);
-      console.error("レスポンス内容:", content);
+    // モデルが拒否した場合のハンドリング
+    if (message.refusal) {
+      throw new VisionAPIError(
+        `Vision APIがリクエストを拒否しました: ${message.refusal}`,
+        "REFUSAL",
+        false,
+      );
+    }
+
+    // パース済みのデータを取得
+    if (!message.parsed) {
       throw new VisionAPIError(
         "Vision APIのレスポンスをパースできませんでした",
         "PARSE_ERROR",
@@ -123,22 +137,7 @@ export async function analyzeImage(imageFile: File): Promise<ImageFeatures> {
       );
     }
 
-    // 必須フィールドの検証
-    if (
-      !imageFeatures.objectType ||
-      !Array.isArray(imageFeatures.colors) ||
-      !Array.isArray(imageFeatures.shapes) ||
-      !Array.isArray(imageFeatures.materials) ||
-      !imageFeatures.detailedDescription
-    ) {
-      throw new VisionAPIError(
-        "Vision APIのレスポンスに必須フィールドが不足しています",
-        "INVALID_RESPONSE",
-        false,
-      );
-    }
-
-    return imageFeatures;
+    return message.parsed as ImageFeatures;
   } catch (error) {
     // OpenAI APIエラーの処理
     if (error instanceof OpenAI.APIError) {
@@ -147,6 +146,23 @@ export async function analyzeImage(imageFile: File): Promise<ImageFeatures> {
         message: error.message,
         code: error.code,
       });
+
+      // finish_reasonによる特殊なエラーハンドリング
+      if (error.message?.includes("length")) {
+        throw new VisionAPIError(
+          "画像解析のレスポンスが長すぎて切り捨てられました",
+          "LENGTH_LIMIT",
+          false,
+        );
+      }
+
+      if (error.message?.includes("content_filter")) {
+        throw new VisionAPIError(
+          "画像がコンテンツポリシーに違反している可能性があります",
+          "CONTENT_FILTER",
+          false,
+        );
+      }
 
       throw new VisionAPIError(
         `画像解析に失敗しました: ${error.message}`,
