@@ -2,6 +2,8 @@
  * カードデータの型定義
  */
 
+import type { DiscussionMessage } from "./discussion";
+
 /**
  * カードの属性
  */
@@ -58,36 +60,8 @@ export interface CardData {
 }
 
 /**
- * 議論メッセージの型
- */
-export type DiscussionMessageType = "analysis" | "discussion" | "conclusion";
-
-/**
- * 議論メッセージインターフェース
- * 評議員間の議論内容を記録
- */
-export interface DiscussionMessage {
-  /** メッセージの一意識別子 */
-  id: string;
-
-  /** 発言した評議員のID */
-  evaluatorId: string;
-
-  /** 発言した評議員の名前 */
-  evaluatorName: string;
-
-  /** メッセージ内容 */
-  message: string;
-
-  /** タイムスタンプ */
-  timestamp: Date;
-
-  /** メッセージタイプ */
-  type: DiscussionMessageType;
-}
-
-/**
  * 画像解析結果の型定義
+ * Vision APIから返される画像の特徴情報
  */
 export interface ImageFeatures {
   /** 物体の種類 */

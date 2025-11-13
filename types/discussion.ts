@@ -2,7 +2,37 @@
  * 議論関連の型定義
  */
 
-import type { DiscussionMessage } from "./card";
+/**
+ * 議論メッセージの型
+ * - analysis: 分析フェーズのメッセージ
+ * - discussion: 議論フェーズのメッセージ
+ * - conclusion: 結論フェーズのメッセージ
+ */
+export type DiscussionMessageType = "analysis" | "discussion" | "conclusion";
+
+/**
+ * 議論メッセージインターフェース
+ * 評議員間の議論内容を記録
+ */
+export interface DiscussionMessage {
+  /** メッセージの一意識別子 */
+  id: string;
+
+  /** 発言した評議員のID */
+  evaluatorId: string;
+
+  /** 発言した評議員の名前 */
+  evaluatorName: string;
+
+  /** メッセージ内容 */
+  message: string;
+
+  /** タイムスタンプ */
+  timestamp: Date;
+
+  /** メッセージタイプ */
+  type: DiscussionMessageType;
+}
 
 /**
  * 議論フェーズ

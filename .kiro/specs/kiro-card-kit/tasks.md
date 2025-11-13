@@ -6,7 +6,7 @@
 
 ## タスク
 
-- [-] 1. プロジェクトのセットアップと基本構造の構築
+- [x] 1. プロジェクトのセットアップと基本構造の構築
   - Next.jsプロジェクトを作成し、必要な依存関係をインストール
   - TypeScript、Tailwind CSS、Lucide Reactを設定
   - Jest + React Testing Libraryを設定
@@ -15,7 +15,7 @@
   - モバイルファースト設計を考慮したレスポンシブ設定
   - _要件: 11.1, 11.2, 12.1, 12.2, 12.3, 12.4_
 
-- [ ] 2. TypeScript型定義の作成
+- [-] 2. TypeScript型定義の作成
   - `types/evaluator.ts`にEvaluator型を定義
   - `types/card.ts`にCardData型を定義
   - `types/discussion.ts`にDiscussionMessage型を定義
