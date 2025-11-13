@@ -152,7 +152,7 @@ export async function generateCardElement(
     const prompt = buildPrompt(evaluator, imageFeatures);
 
     const { text } = await generateText({
-      model: openai("gpt-4o"),
+      model: openai("gpt-4.1-mini"),
       prompt,
       temperature: 0.8, // 創造性を高めるため
       maxOutputTokens: 500,

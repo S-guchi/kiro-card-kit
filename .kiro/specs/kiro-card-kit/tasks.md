@@ -143,7 +143,7 @@
   - ボタンクリックでCard Modalを開く
   - _要件: 4.6, 10.4, 11.5, 11.6_
 
-- [-] 15. CardDisplayコンポーネントの実装
+- [x] 15. CardDisplayコンポーネントの実装
   - `components/card/CardDisplay.tsx`を作成
   - TCG風のカードUIを実装
   - カード名、属性、レア度、フレーバーテキストを表示

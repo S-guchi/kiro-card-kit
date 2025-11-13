@@ -68,7 +68,7 @@ export async function analyzeImage(imageFile: File): Promise<ImageFeatures> {
 
     // Vision APIを呼び出して画像を解析
     const response = await openai.chat.completions.create({
-      model: "gpt-4o",
+      model: "gpt-4.1-mini",
       messages: [
         {
           role: "user",
