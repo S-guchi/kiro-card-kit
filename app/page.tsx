@@ -8,7 +8,9 @@ import {
   useEffect,
   useState,
 } from "react";
+import { EvaluatorPanel } from "@/components/main/EvaluatorPanel";
 import { ImageUploader } from "@/components/main/ImageUploader";
+import { loadDefaultEvaluators } from "@/lib/templates/evaluatorLoader";
 import type { CardData } from "@/types/card";
 import type { DiscussionMessage, DiscussionPhase } from "@/types/discussion";
 import type { Evaluator } from "@/types/evaluator";
@@ -84,6 +86,17 @@ function MainScreenProvider({ children }: { children: ReactNode }) {
         console.error("コレクションの読み込みに失敗しました:", error);
       }
     }
+  }, []);
+
+  // 評議員テンプレートを読み込む
+  useEffect(() => {
+    loadDefaultEvaluators()
+      .then((loadedEvaluators) => {
+        setEvaluators(loadedEvaluators);
+      })
+      .catch((error) => {
+        console.error("評議員テンプレートの読み込みに失敗しました:", error);
+      });
   }, []);
 
   // コレクションをLocalStorageに保存する
@@ -168,6 +181,8 @@ function MainScreenContent() {
     discussionPhase,
     uploadedImage,
     collection,
+    evaluators,
+    discussionLog,
     setUploadedImage,
     isDiscussing,
   } = useMainScreen();
@@ -277,20 +292,13 @@ function MainScreenContent() {
         </div>
 
         {/* 評議員表示エリア */}
-        <div className="grid grid-cols-4 gap-2">
-          {[1, 2, 3, 4].map((i) => (
-            <div key={i} className="flex flex-col items-center gap-1">
-              <div className="rounded-lg border-2 border-purple-300 bg-white/80 p-2 backdrop-blur-sm dark:border-zinc-700 dark:bg-zinc-950/80">
-                <div className="w-10 h-10 rounded bg-gradient-to-br from-purple-400 to-pink-400 flex items-center justify-center">
-                  <span className="text-white text-xs font-bold">E{i}</span>
-                </div>
-              </div>
-              <div className="text-center text-xs text-zinc-600 dark:text-zinc-400">
-                評議員{i}
-              </div>
-            </div>
-          ))}
-        </div>
+        {evaluators.length > 0 && (
+          <EvaluatorPanel
+            evaluators={evaluators}
+            messages={discussionLog}
+            isThinking={isDiscussing}
+          />
+        )}
       </main>
     </div>
   );
