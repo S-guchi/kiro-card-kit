@@ -15,5 +15,6 @@ mcp使用ルール
 作業が終わったら以下を実行すること
 - pnpm lint
 - pnpm type-check
+- pnpm test
 - pnpm format
 - git commit -m "<作業内容>"

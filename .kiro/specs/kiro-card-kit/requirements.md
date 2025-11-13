@@ -2,9 +2,9 @@
 
 ## はじめに
 
-**kiro-card-kit** は、撮影したおもちゃ・物品の写真を元にTCG風の架空カードを自動生成するアプリケーションです。カード生成プロセスには4人のAI評価員が参加し、それぞれの視点から議論・分析した内容がUI上で可視化されます。評価員はテンプレートとして定義されており、ユーザーが自由に差し替え可能です。
+**kiro-card-kit** は、撮影したおもちゃ・物品の写真を元にTCG風の架空カードを自動生成するモバイルファーストのアプリケーションです。カード生成プロセスには4人のAI評価員が参加し、それぞれの視点から議論・分析した内容がUI上で可視化されます。評価員はテンプレートとして定義されており、ユーザーが自由に差し替え可能です。
 
-本アプリケーションは、複数AIの共同制作とテンプレート性を体現し、子どもから開発者まで幅広いユーザーが楽しめる設計を目指します。
+本アプリケーションは、複数AIの共同制作とテンプレート性を体現し、子どもから開発者まで幅広いユーザーが楽しめる設計を目指します。UIデザインは `/design` ディレクトリのモックアプリを参考に構築します。
 
 ## 用語集
 
@@ -21,8 +21,7 @@
 - **Card Modal**: 生成されたカードを派手な演出で表示するモーダル
 - **Lucide**: アプリケーション全体で使用するアイコンライブラリ
 - **Vercel AI SDK**: AI機能の実装に使用するSDK
-- **Motion**: アニメーション実装に使用するライブラリ（motion.dev）
-- **Opening Dialogue**: 画像解析中に表示する定型の導入会話
+
 
 ## 要件
 
@@ -68,29 +67,19 @@
 8. THE System SHALL 4人の評議員の生成処理を並列実行する
 9. THE System SHALL 各評議員の生成結果を個別に保存する
 
-### 要件4: AI評議員のアニメーションと議論表示
+### 要件4: AI評議員の議論表示
 
-**ユーザーストーリー:** ユーザーとして、AI評議員たちが生き生きと動いて議論する様子を見て楽しみたい
+**ユーザーストーリー:** ユーザーとして、AI評議員たちが議論する様子を見て楽しみたい
 
 #### 受入基準
 
-1. THE System SHALL Main Screenの左側に4人の評議員を縦に並べて待機状態で表示する
+1. THE System SHALL 4人の評議員を表示する
 2. THE System SHALL 各評議員にユーザー提供の画像を表示する
-3. THE System SHALL Motion（motion.dev）を使用してアニメーションを実装する
-4. WHEN User が開始ボタンを押す, THE System SHALL アップロードされた画像を画面中央に配置する
-5. THE System SHALL 評議員を画像の四隅にスムーズに移動させる
-6. THE System SHALL 移動アニメーションを自然な「トコトコ歩く」ような動きにする
-7. THE System SHALL 評議員を左上、右上、左下、右下の四隅に配置する
-8. THE System SHALL 複数のOpening Dialogueを用意する
-9. THE System SHALL Opening Dialogueの例として「今日の画像はこれね〜みてみてよっか」を含める
-10. WHEN 評議員が四隅に移動完了する, THE System SHALL Opening Dialogueをランダムに選択して表示する
-11. THE System SHALL Opening Dialogue表示後に4人全員が考えているアニメーションを表示する
-12. THE System SHALL 考えているアニメーション表示中に画像解析処理を実行する
-13. WHEN 画像解析が完了する, THE System SHALL 各評議員が担当する要素の生成を開始する
-14. THE System SHALL 各評議員の発言を吹き出し形式でリアルタイム表示する
-15. THE System SHALL 4人の評議員の発言を並列で表示する
-16. WHEN 全評議員の生成が完了する, THE System SHALL 「結果を見る！」ボタンを表示する
-17. THE System SHALL 議論ログを時系列順に保存する
+3. WHEN 画像解析が完了する, THE System SHALL 各評議員が担当する要素の生成を開始する
+4. THE System SHALL 各評議員の発言を吹き出し形式でリアルタイム表示する
+5. THE System SHALL 4人の評議員の発言を並列で表示する
+6. WHEN 全評議員の生成が完了する, THE System SHALL 「結果を見る！」ボタンを表示する
+7. THE System SHALL 議論ログを時系列順に保存する
 
 ### 要件5: カードデータの統合と生成
 
@@ -131,18 +120,17 @@
 
 ### 要件8: 評議員テンプレートのカスタマイズ
 
-**ユーザーストーリー:** 開発者として、AI評議員の人格や言動の癖を簡単に差し替えて、独自のカード生成体験を作りたい
+**ユーザーストーリー:** 開発者として、AI評議員の人格や役割を簡単に差し替えて、独自のカード生成体験を作りたい
 
 #### 受入基準
 
 1. THE System SHALL `templates/evaluators/` ディレクトリから評議員定義を読み込む
 2. THE System SHALL JSON形式の評議員テンプレートをサポートする
-3. THE System SHALL 評議員テンプレートにPersona（性格）、Role（役割）、Responsibility（担当要素）、SpeechPattern（言動の癖）を含める
-4. THE System SHALL 評議員テンプレートにOpeningDialogues（導入会話の配列）を含める
-5. THE System SHALL 評議員の画像ファイルパスをテンプレートに含める
-6. WHEN User が新しい評議員テンプレートを追加する, THE System SHALL 次回起動時に反映する
-7. THE System SHALL 評議員テンプレートの検証を行い、不正な形式の場合はエラーを表示する
-8. THE System SHALL デフォルトで4人の評議員テンプレート（カード名担当、フレーバー担当、属性担当、色・レア度担当）を提供する
+3. THE System SHALL 評議員テンプレートにPersona（性格）、Role（役割）、Responsibility（担当要素）を含める
+4. THE System SHALL 評議員の画像ファイルパスをテンプレートに含める
+5. WHEN User が新しい評議員テンプレートを追加する, THE System SHALL 次回起動時に反映する
+6. THE System SHALL 評議員テンプレートの検証を行い、不正な形式の場合はエラーを表示する
+7. THE System SHALL デフォルトで4人の評議員テンプレート（カード名担当、フレーバー担当、属性担当、色・レア度担当）を提供する
 
 ### 要件9: エラーハンドリングとユーザー通知
 
@@ -150,14 +138,13 @@
 
 #### 受入基準
 
-1. WHEN Vision APIが解析に失敗する, THE System SHALL 評議員に謝罪メッセージを表示させる
-2. WHEN AI評議員の生成が失敗する, THE System SHALL 評議員に謝罪メッセージを表示させる
-3. THE System SHALL 謝罪メッセージの例として「ごめん、よくわからなかった...」を含める
-4. WHEN 解析または生成が失敗する, THE System SHALL 議論を自然に終了させる
-5. WHEN 解析または生成が失敗する, THE System SHALL Main Screenの初期状態に戻る
-6. WHEN ネットワークエラーが発生する, THE System SHALL オフライン状態を通知する
-7. THE System SHALL エラーログをコンソールに出力する
-8. THE System SHALL ユーザーフレンドリーなエラーメッセージを日本語で表示する
+1. WHEN Vision APIが解析に失敗する, THE System SHALL エラーメッセージを表示する
+2. WHEN AI評議員の生成が失敗する, THE System SHALL エラーメッセージを表示する
+3. WHEN 解析または生成が失敗する, THE System SHALL 議論を自然に終了させる
+4. WHEN 解析または生成が失敗する, THE System SHALL Main Screenの初期状態に戻る
+5. WHEN ネットワークエラーが発生する, THE System SHALL オフライン状態を通知する
+6. THE System SHALL エラーログをコンソールに出力する
+7. THE System SHALL ユーザーフレンドリーなエラーメッセージを日本語で表示する
 
 ### 要件10: パフォーマンスと応答性
 
@@ -178,14 +165,10 @@
 
 1. THE System SHALL Main Screen 1画面のみを提供する
 2. THE System SHALL Main Screenをアプリケーションの初期画面として表示する
-3. THE System SHALL Main Screenの左側に4人の評議員を縦に配置する
-4. THE System SHALL Main Screenの右端にコレクション一覧パネルを配置する
-5. THE System SHALL Main Screenの中央に画像アップロードエリアを配置する
-6. WHEN User が開始ボタンを押す, THE System SHALL アップロード画像を画面中央に配置する
-7. WHEN User が開始ボタンを押す, THE System SHALL 評議員を画像の四隅に配置変更する
-8. THE System SHALL Main Screen上で議論アニメーションを表示する
-9. WHEN カード生成が完了する, THE System SHALL 「結果を見る！」ボタンを表示する
-10. WHEN User が「結果を見る！」ボタンをクリックする, THE System SHALL Card Modalを表示する
+3. THE System SHALL 画像アップロードエリアを提供する
+4. THE System SHALL 議論表示エリアを提供する
+5. WHEN カード生成が完了する, THE System SHALL 「結果を見る！」ボタンを表示する
+6. WHEN User が「結果を見る！」ボタンをクリックする, THE System SHALL Card Modalを表示する
 
 ### 要件12: モバイルファースト設計
 

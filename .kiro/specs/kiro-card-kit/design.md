@@ -2,14 +2,17 @@
 
 ## 概要
 
-kiro-card-kitは、Next.js、Vercel AI SDK、Motion（motion.dev）を使用して構築されるTCGカード生成アプリケーションです。ユーザーがアップロードした画像を4人のAI評議員が分析・議論し、その過程を楽しみながらオリジナルのTCGカードを生成します。
+kiro-card-kitは、Next.js、Vercel AI SDKを使用して構築されるモバイルファーストのTCGカード生成アプリケーションです。ユーザーがアップロードした画像を4人のAI評議員が分析・議論し、その過程を楽しみながらオリジナルのTCGカードを生成します。
+
+UIデザインは `/design` ディレクトリのモックアプリを参考に構築します。
 
 ### 主要な設計目標
 
-1. **体験重視のUX**: 評議員のアニメーションと議論表示で待ち時間を楽しい体験に変換
-2. **テンプレート性**: 評議員とカードスキンを簡単に差し替え可能
-3. **パフォーマンス**: 非同期処理による体感速度の向上
-4. **シンプルさ**: 1画面構成、モーダルでのカード表示、直感的な操作フロー
+1. **モバイルファースト**: スマートフォンでの利用を最優先に設計
+2. **体験重視のUX**: 評議員の議論表示で待ち時間を楽しい体験に変換
+3. **テンプレート性**: 評議員を簡単に差し替え可能
+4. **パフォーマンス**: 非同期処理による体感速度の向上
+5. **シンプルさ**: 1画面構成、モーダルでのカード表示、直感的な操作フロー
 
 ## アーキテクチャ
 
@@ -18,11 +21,12 @@ kiro-card-kitは、Next.js、Vercel AI SDK、Motion（motion.dev）を使用し�
 - **フレームワーク**: Next.js (App Router)
 - **言語**: TypeScript
 - **スタイリング**: Tailwind CSS
-- **アニメーション**: Motion (motion.dev)
 - **アイコン**: Lucide React
 - **AI**: Vercel AI SDK + OpenAI
 - **ストレージ**: LocalStorage (クライアントサイド)
 - **状態管理**: React Context + Hooks
+- **テスト**: Jest + React Testing Library
+- **デザイン参考**: `/design` ディレクトリのモックアプリ
 
 ### システムアーキテクチャ
 
@@ -30,20 +34,18 @@ kiro-card-kitは、Next.js、Vercel AI SDK、Motion（motion.dev）を使用し�
 ┌─────────────────────────────────────────────────────────┐
 │                     Next.js App                          │
 ├─────────────────────────────────────────────────────────┤
-│  UI Layer                                                │
-│  ├─ Main Screen (評議員アニメーション + 議論表示)        │
-│  └─ Card Modal (カード表示 + 派手な演出)                 │
+│  UI Layer (モバイルファースト)                           │
+│  ├─ Main Screen (議論表示)                              │
+│  └─ Card Modal (カード表示)                             │
 ├─────────────────────────────────────────────────────────┤
 │  Business Logic Layer                                    │
 │  ├─ Card Generation Service                             │
 │  ├─ Discussion Orchestrator                             │
-│  ├─ Animation Controller                                │
 │  └─ Template Manager                                    │
 ├─────────────────────────────────────────────────────────┤
 │  Data Layer                                              │
 │  ├─ LocalStorage Manager                                │
-│  ├─ Evaluator Templates                                 │
-│  └─ Card Skins                                          │
+│  └─ Evaluator Templates                                 │
 ├─────────────────────────────────────────────────────────┤
 │  External Services                                       │
 │  ├─ Vercel AI SDK (OpenAI)                             │
@@ -74,8 +76,7 @@ kiro-card-kit/
 │   ├── card/
 │   │   ├── CardModal.tsx
 │   │   ├── CardDisplay.tsx
-│   │   ├── CardExporter.tsx
-│   │   └── CardSkinSelector.tsx
+│   │   └── CardExporter.tsx
 │   └── common/
 │       ├── Button.tsx
 │       └── ErrorBoundary.tsx
@@ -94,18 +95,18 @@ kiro-card-kit/
 │       └── validation.ts
 ├── public/
 │   ├── templates/
-│   │   ├── evaluators/
-│   │   │   ├── name-generator.json
-│   │   │   ├── flavor-writer.json
-│   │   │   ├── attribute-decider.json
-│   │   │   └── color-decider.json
-│   │   └── card-skins/
-│   │       └── default/
+│   │   └── evaluators/
+│   │       ├── name-generator.json
+│   │       ├── flavor-writer.json
+│   │       ├── attribute-decider.json
+│   │       └── color-decider.json
 │   └── member/
 │       ├── 1.png  # 評議員1の画像
 │       ├── 2.png  # 評議員2の画像
 │       ├── 3.png  # 評議員3の画像
 │       └── 4.png  # 評議員4の画像
+├── design/
+│   └── # モックアプリ（UI設計の参考）
 ├── types/
 │   ├── card.ts
 │   ├── evaluator.ts
@@ -119,21 +120,23 @@ kiro-card-kit/
 
 #### 1. Main Screen
 
-**責務**: 画像アップロード、評議員表示、議論アニメーション、コレクション管理
+**責務**: 画像アップロード、評議員表示、議論表示、コレクション管理
 
 **構成要素**:
 - `ImageUploader`: ドラッグ&ドロップ、ファイル選択
-- `EvaluatorPanel`: 4人の評議員を左側に縦配置
-- `DiscussionStage`: 評議員のアニメーションと議論表示
-- `CollectionSidebar`: 右端のコレクション一覧
+- `EvaluatorPanel`: 4人の評議員表示
+- `DiscussionStage`: 評議員の議論表示
+- `CollectionSidebar`: コレクション一覧
 - 「結果を見る！」ボタン
+
+**レイアウト**: `/design` ディレクトリのモックアプリを参考に、モバイルファーストで構築
 
 **状態管理**:
 ```typescript
 interface MainScreenState {
   uploadedImage: File | null;
   isDiscussing: boolean;
-  discussionPhase: 'idle' | 'moving' | 'opening' | 'thinking' | 'generating' | 'complete';
+  discussionPhase: 'idle' | 'thinking' | 'generating' | 'complete';
   evaluators: Evaluator[];
   discussionLog: DiscussionMessage[];
   collection: CardData[];
@@ -144,30 +147,27 @@ interface MainScreenState {
 
 #### 2. Card Modal
 
-**責務**: 生成されたカードの派手な演出での表示、エクスポート機能
+**責務**: 生成されたカードの表示、エクスポート機能
 
 **構成要素**:
 - `CardDisplay`: TCG風カードUI
 - `CardExporter`: JPG形式でのエクスポート
 - 閉じるボタン
 
-**演出**:
-- フェードイン + スケールアニメーション
-- レア度に応じたパーティクルエフェクト
-- 背景のぼかし効果
+**デザイン**: `/design` ディレクトリのモックアプリを参考に構築
 
 #### 3. DiscussionStage
 
-**責務**: 評議員のアニメーションと議論の可視化
+**責務**: 評議員の議論の可視化
 
-**アニメーションフロー**:
-1. **待機状態**: 左側に4人縦並び
-2. **移動開始**: 開始ボタン押下 → 画像を中央配置
-3. **四隅へ移動**: Motion使用、トコトコ歩くアニメーション
-4. **Opening Dialogue**: ランダムな導入会話
-5. **Thinking Phase**: 4人全員が「うーん」と考えるアニメーション（画像解析中）
-6. **Generation Phase**: 吹き出しで各評議員の発言を並列表示
-7. **完了**: 「結果を見る！」ボタン表示 → Card Modal表示
+**議論フロー**:
+1. **待機状態**: 評議員表示
+2. **開始**: 開始ボタン押下
+3. **Thinking Phase**: 画像解析中の表示
+4. **Generation Phase**: 吹き出しで各評議員の発言を並列表示
+5. **完了**: 「結果を見る！」ボタン表示 → Card Modal表示
+
+**デザイン**: `/design` ディレクトリのモックアプリを参考に構築
 
 ### データモデル
 
@@ -181,13 +181,7 @@ interface Evaluator {
   persona: string;  // 性格・役割の説明
   role: string;  // 分析における役割
   responsibility: 'name' | 'flavor' | 'attribute' | 'color-rarity';  // 担当要素
-  speechPattern: string;  // 言動の癖
-  openingDialogues: string[];  // 導入会話の配列
   imagePath: string;  // 評議員の画像パス（例: /member/1.png）
-  position: {
-    idle: { x: number; y: number };  // 待機位置
-    discussion: { x: number; y: number };  // 議論位置（四隅）
-  };
 }
 ```
 
@@ -206,7 +200,6 @@ interface CardData {
   imageData: string;  // Base64エンコードされた画像データ
   createdAt: Date;
   discussionLog: DiscussionMessage[];
-  skinId: string;  // 使用したスキンID
 }
 ```
 
@@ -219,36 +212,7 @@ interface DiscussionMessage {
   evaluatorName: string;
   message: string;
   timestamp: Date;
-  type: 'opening' | 'analysis' | 'discussion' | 'conclusion';
-}
-```
-
-#### CardSkin (カードスキン)
-
-```typescript
-interface CardSkin {
-  id: string;
-  name: string;
-  backgroundImage: string;
-  frameStyles: {
-    common: string;
-    rare: string;
-    epic: string;
-    legendary: string;
-  };
-  attributeIcons: {
-    Fire: string;
-    Nature: string;
-    Machine: string;
-    Cosmic: string;
-    Shadow: string;
-    Light: string;
-  };
-  colorScheme: {
-    primary: string;
-    secondary: string;
-    accent: string;
-  };
+  type: 'analysis' | 'discussion' | 'conclusion';
 }
 ```
 
@@ -305,46 +269,16 @@ interface CardSkin {
 
 **備考**: 4人の評議員に対して並列で呼び出される
 
-## アニメーションとUX設計
-
-### 評議員アニメーション
-
-**Motion（motion.dev）を使用した実装**:
-
-```typescript
-// 待機状態から議論位置への移動
-const evaluatorVariants = {
-  idle: (index: number) => ({
-    x: 0,
-    y: index * 120,  // 縦に120pxずつ配置
-    scale: 0.8,
-  }),
-  discussion: (corner: 'topLeft' | 'topRight' | 'bottomLeft' | 'bottomRight') => ({
-    x: cornerPositions[corner].x,
-    y: cornerPositions[corner].y,
-    scale: 1,
-    transition: {
-      type: 'spring',
-      stiffness: 50,
-      damping: 20,
-      duration: 1.5,
-    },
-  }),
-};
-```
+## UX設計
 
 ### 議論フロー
 
-1. **Opening Dialogue (1-2秒)**
-   - ランダムに選ばれた導入会話を表示
-   - 例: 「今日の画像はこれね〜みてみてよっか」
-
-2. **Thinking Phase (画像解析中)**
-   - 4人全員が「うーん」と考えているアニメーションを表示
+1. **Thinking Phase (画像解析中)**
+   - 画像解析中の表示
    - この間に画像解析APIを1回だけ実行（コスト削減）
    - 画像の詳細情報（物体、色、形状、材質、説明）を取得
 
-3. **Parallel Generation Phase (並列実行)**
+2. **Parallel Generation Phase (並列実行)**
    - 画像解析結果を全評議員で共有
    - 評議員1: カード名を生成
    - 評議員2: フレーバーテキストを生成
@@ -352,34 +286,18 @@ const evaluatorVariants = {
    - 評議員4: カードの色・レア度を決定
    - 4人の発言を並列で吹き出し表示
 
-4. **Integration & Result Button**
+3. **Integration & Result Button**
    - 各評議員の結果を統合
    - カードデータ生成完了
    - 「結果を見る！」ボタンを表示
-   - ボタンクリックでCard Modalを派手な演出で表示
+   - ボタンクリックでCard Modalを表示
 
-### 吹き出しアニメーション
+### モバイルファースト設計
 
-```typescript
-const speechBubbleVariants = {
-  hidden: { opacity: 0, scale: 0.8, y: 10 },
-  visible: {
-    opacity: 1,
-    scale: 1,
-    y: 0,
-    transition: {
-      type: 'spring',
-      stiffness: 300,
-      damping: 20,
-    },
-  },
-  exit: {
-    opacity: 0,
-    scale: 0.8,
-    transition: { duration: 0.2 },
-  },
-};
-```
+- 320px以上の画面幅をサポート
+- タッチ操作に最適化されたUI
+- レスポンシブレイアウト
+- `/design` ディレクトリのモックアプリを参考に構築
 
 ## エラーハンドリング
 
@@ -389,13 +307,13 @@ const speechBubbleVariants = {
 |-----------|--------------|------------|---------|
 | 画像サイズ超過 | アップロード時 | トースト通知 | 不要 |
 | 画像形式不正 | アップロード時 | トースト通知 | 不要 |
-| Vision API解析失敗 | 解析中 | 評議員の謝罪メッセージ | 不要 |
-| AI生成失敗 | 議論生成中 | 評議員の謝罪メッセージ | 不要 |
+| Vision API解析失敗 | 解析中 | エラーメッセージ | 不要 |
+| AI生成失敗 | 議論生成中 | エラーメッセージ | 不要 |
 | ネットワークエラー | API呼び出し時 | モーダル | 可能 |
 | LocalStorage容量超過 | 保存時 | モーダル | 不要 |
 
 **解析失敗時の特別な処理**:
-- Vision APIまたはAI生成が失敗した場合、評議員が「ごめん、よくわからなかった...」といった謝罪メッセージを表示
+- Vision APIまたはAI生成が失敗した場合、エラーメッセージを表示
 - 議論を自然に終了させ、Main Screenの初期状態に戻る
 - リトライボタンは表示せず、ユーザーが再度画像をアップロードする形式
 
@@ -437,7 +355,7 @@ const handleError = (error: CardGenerationError) => {
 1. **並行処理**
    - 画像解析は1回のみ実行（コスト削減）
    - 4人の評議員のカード要素生成を並列実行
-   - 考えているアニメーション表示中に画像解析を実行
+   - 画像解析中の表示で待ち時間を短縮
 
 2. **画像最適化**
    - アップロード時にリサイズ（最大1024x1024）
@@ -449,10 +367,33 @@ const handleError = (error: CardGenerationError) => {
    - 古いカードの自動削除（100枚制限）
    - インデックス管理
 
-4. **アニメーション最適化**
-   - GPU加速（transform, opacity使用）
-   - will-change プロパティの適切な使用
-   - アニメーション中の再レンダリング抑制
+4. **モバイル最適化**
+   - タッチイベントの最適化
+   - レスポンシブ画像の使用
+   - モバイルブラウザでのパフォーマンス考慮
+
+## テスト戦略
+
+### テストアプローチ
+
+- **ファイル単位での小さなテスト**: 各コンポーネント、サービス、ユーティリティごとに独立したテストファイルを作成
+- **単体テスト**: Jest + React Testing Libraryを使用
+- **テストファイル配置**: `__tests__` ディレクトリまたは各ファイルと同階層に `.test.ts` / `.test.tsx` ファイルを配置
+
+### テスト対象
+
+1. **コンポーネントテスト**
+   - 各UIコンポーネントの描画とインタラクション
+   - プロップスの変更による動作確認
+
+2. **サービステスト**
+   - カード生成ロジック
+   - LocalStorage操作
+   - テンプレート読み込み
+
+3. **ユーティリティテスト**
+   - バリデーション関数
+   - データ変換関数
 
 ## セキュリティ考慮事項
 
@@ -493,4 +434,6 @@ vercel --prod
 
 ## まとめ
 
-このデザインは、要件定義書で定義された全ての機能要件を満たしつつ、拡張性とメンテナンス性を考慮した設計となっています。特に、評議員のアニメーションと議論表示によるUX向上、テンプレートシステムによるカスタマイズ性、パフォーマンス最適化による快適な操作感を重視しています。
+このデザインは、要件定義書で定義された全ての機能要件を満たしつつ、拡張性とメンテナンス性を考慮した設計となっています。特に、モバイルファーストの設計、評議員の議論表示によるUX向上、テンプレートシステムによるカスタマイズ性、パフォーマンス最適化による快適な操作感を重視しています。
+
+UIデザインは `/design` ディレクトリのモックアプリを参考に構築します。
